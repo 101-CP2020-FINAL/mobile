@@ -1,17 +1,24 @@
 package hz.hz.atomchat.app_logic
 
+import com.google.gson.Gson
 import hz.hz.atomchat.app_logic.api.createApi
 import hz.hz.atomchat.render.LCEState
 import hz.hz.atomchat.render.Loading
 import hz.hz.atomchat.tasks.Action
 import hz.hz.atomchat.tasks.Priority
 import hz.hz.atomchat.tasks.Task
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import io.github.centrifugal.centrifuge.*
+import io.github.centrifugal.centrifuge.EventListener
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.*
+import okhttp3.*
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import retrofit2.await
+import timber.log.Timber
 import hz.hz.atomchat.app_logic.api.Task as ApiTask
+import hz.hz.atomchat.app_logic.api.Task as TaskApi
 
 object Tasks {
     private val api by lazy { createApi() }
@@ -39,27 +46,64 @@ object Tasks {
         }
 
         emit(appState)
+
+        socketFlow().collect { task ->
+
+            if (appState.content == null) {
+                return@collect
+            }
+
+            val tasks = appState.content!!.tasks.plus(task).sortedBy { it.priority.ordinal }
+
+            appState = appState.copy(content = AppState(tasks))
+
+            emit(appState)
+        }
     }
 
     val format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
-    private fun convert(tasks: List<ApiTask>): List<Task> {
-        return tasks.map {
-            Task(
-                it.id,
-                title = it.title,
-                description = it.description,
-                priority = Priority.High,
-                action = Action.ToDo,
-                startTime = LocalDateTime.parse(
-                    it.date_start,
-                    format
-                ),
-                endTime = LocalDateTime.parse(
-                    it.deadline,
-                    format
-                ),
-            )
-        }
+    private fun convert(tasks: List<TaskApi>): List<Task> {
+        return tasks.map { it.toTask() }
     }
+}
+
+private fun TaskApi.toTask(): Task = Task(
+    id,
+    title = title,
+    description = description,
+    priority = Priority.High,
+    action = Action.ToDo,
+    startTime = LocalDateTime.parse(
+        date_start,
+        Tasks.format
+    ),
+    endTime = LocalDateTime.parse(
+        deadline,
+        Tasks.format
+    ),
+)
+
+fun socketFlow(): Flow<Task> = callbackFlow {
+    val client = Client(
+        "ws://92.63.103.157:9002/connection/websocket?format=protobuf",
+        Options(),
+        object : EventListener() {
+            override fun onError(client: Client?, event: ErrorEvent?) {
+                Timber.tag("socket").d("error")
+            }
+        }
+    )
+    client.connect()
+
+    val sub = client.newSubscription("public", object : SubscriptionEventListener() {
+        override fun onPublish(sub: Subscription?, event: PublishEvent?) {
+            Timber.tag("socket").d(String())
+            val task = Gson().fromJson(String(event!!.data), TaskApi::class.java)
+            offer(task.toTask())
+        }
+    })
+    sub.subscribe()
+
+    awaitClose { cancel() }
 }
