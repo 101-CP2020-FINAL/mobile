@@ -36,31 +36,36 @@ class TasksFragment : Fragment() {
         val rv = view.findViewById<EpoxyRecyclerView>(R.id.rv)
 
         model.tasks().observe(view) {
-            onChange { ps, ns ->
-                Timber.d("observe tasks")
+            diff({ it }) {
+                Timber.d(it.loading.toString())
+                Timber.e(it.error)
 
-                if (ns.content == null) {
-                    return@onChange
+                if (it.content == null) {
+                    return@diff
                 }
 
                 rv.withModels {
-                    header {
-                        id("header1")
-                        title(
-                            view.context.getString(
-                                R.string.task_header_in_progress,
-                                ns.content.tasksInProgress.size
-                            )
-                        )
-                    }
+                    val size = it.content.tasksInProgress.size
 
-                    for (task in ns.content.tasksInProgress) {
-                        currentTaskView {
-                            id(task.id)
-                            title(task.title)
-                            priority(task.priority)
-                            action(task.action)
-                            endTime(task.endTime)
+                    if (size > 0) {
+                        header {
+                            id("header1")
+                            title(
+                                view.context.getString(
+                                    R.string.task_header_in_progress,
+                                    size
+                                )
+                            )
+                        }
+
+                        for (task in it.content.tasksInProgress) {
+                            currentTaskView {
+                                id(task.id)
+                                title(task.title)
+                                priority(task.priority)
+                                action(task.action)
+                                endTime(task.endTime)
+                            }
                         }
                     }
 
@@ -69,12 +74,12 @@ class TasksFragment : Fragment() {
                         title(
                             view.context.getString(
                                 R.string.task_header_todo,
-                                ns.content.tasksToDo.size
+                                it.content.tasksToDo.size
                             )
                         )
                     }
 
-                    for (task in ns.content.tasksToDo) {
+                    for (task in it.content.tasksToDo) {
                         taskView {
                             id(task.id)
                             title(task.title)

@@ -21,6 +21,7 @@ class Task(
     val title: String,
     val priority: Priority,
     val action: Action,
+    val startTime: LocalDateTime,
     val endTime: LocalDateTime,
     val description: String
 )

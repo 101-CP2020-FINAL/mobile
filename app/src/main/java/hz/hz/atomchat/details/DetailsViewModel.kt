@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.threeten.bp.LocalDateTime
 
-class DetailsViewModel : ViewModel()  {
+class DetailsViewModel : ViewModel() {
     fun task(): Flow<Task> = flow {
         emit(
             Task(
@@ -16,6 +16,7 @@ class DetailsViewModel : ViewModel()  {
                 title = "Title",
                 Priority.High,
                 Action.ToBeDone,
+                startTime = LocalDateTime.now().plusMinutes(10),
                 endTime = LocalDateTime.now().plusMinutes(10),
                 description = """
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eget justo mauris. Nam a nunc felis. Nullam sodales luctus nunc, vel malesuada massa efficitur ut. Vestibulum eget interdum metus. Quisque commodo posuere diam et vestibulum. Duis ac ipsum in ante maximus lacinia eu et ex. Proin ut porta est. Curabitur vitae scelerisque mauris. Maecenas a volutpat arcu. Phasellus nec justo nunc.
