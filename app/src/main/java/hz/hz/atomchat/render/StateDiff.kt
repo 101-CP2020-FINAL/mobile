@@ -1,6 +1,6 @@
 package hz.hz.atomchat.render
 
-import java.util.ArrayDeque
+import java.util.*
 
 class StateDiff<S : Any> {
     private val diffs = ArrayDeque<(ps: S?, ns: S) -> Unit>()

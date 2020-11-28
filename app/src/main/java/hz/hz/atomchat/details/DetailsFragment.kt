@@ -1,15 +1,18 @@
 package hz.hz.atomchat.details
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.airbnb.epoxy.EpoxyRecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import hz.hz.atomchat.R
-import hz.hz.atomchat.commonviews.*
+import hz.hz.atomchat.commonviews.button
+import hz.hz.atomchat.commonviews.header2
+import hz.hz.atomchat.commonviews.image
+import hz.hz.atomchat.commonviews.text
 import hz.hz.atomchat.render.diff
 import hz.hz.atomchat.render.observe
 import hz.hz.atomchat.tasks.Action

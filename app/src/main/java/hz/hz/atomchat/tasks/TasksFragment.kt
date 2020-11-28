@@ -1,18 +1,18 @@
 package hz.hz.atomchat.tasks
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.airbnb.epoxy.EpoxyRecyclerView
 import hz.hz.atomchat.R
 import hz.hz.atomchat.commonviews.header
-import hz.hz.atomchat.details.DetailsFragment
+import hz.hz.atomchat.commonviews.progress
+import hz.hz.atomchat.commonviews.text
 import hz.hz.atomchat.details.newDetails
-import hz.hz.atomchat.render.LCEState
+import hz.hz.atomchat.render.Loading
 import hz.hz.atomchat.render.diff
 import hz.hz.atomchat.render.observe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -39,14 +39,24 @@ class TasksFragment : Fragment() {
 
         model.tasks().observe(view) {
             diff({ it }) {
-                Timber.d(it.loading.toString())
-                Timber.e(it.error)
-
-                if (it.content == null) {
-                    return@diff
-                }
-
                 rv.withModels {
+                    if (it.loading != Loading.None) {
+                        progress {
+                            id("progress")
+                        }
+                    }
+
+                    if (it.error != null) {
+                        text {
+                            id("error")
+                            text("Error: " + it.error.message)
+                        }
+                    }
+
+                    if (it.content == null) {
+                        return@withModels
+                    }
+
                     val size = it.content.tasksInProgress.size
 
                     if (size > 0) {

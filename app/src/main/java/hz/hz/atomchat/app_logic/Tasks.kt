@@ -18,7 +18,6 @@ import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import retrofit2.await
 import timber.log.Timber
-import hz.hz.atomchat.app_logic.api.Task as ApiTask
 import hz.hz.atomchat.app_logic.api.Task as TaskApi
 
 object Tasks {
