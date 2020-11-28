@@ -7,4 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="action_text_normal">#003274</color>
+    <color name="task_bg">#F5F5F6</color>
+    <color name="progress">#259789</color>
+    <color name="secondary_text">#5F6062</color>
 </resources>

@@ -34,14 +34,24 @@
             android:id="@+id/task_item_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:textAppearance="?attr/textAppearanceBody1"
-            tools:text="До 11:30:00" />
+            tools:text="Осталось 11:30:00" />
+
+        <ProgressBar
+            android:id="@+id/task_item_progress"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:progressTint="@color/progress"
+            android:progress="68"
+            />
 
         <TextView
             android:id="@+id/task_item_action"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:textColor="@color/action_text_normal"
             android:textAppearance="?attr/textAppearanceSubtitle2"
             android:background="@drawable/action_normal"

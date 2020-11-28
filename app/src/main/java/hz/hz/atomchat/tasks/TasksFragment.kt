@@ -10,6 +10,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.airbnb.epoxy.EpoxyRecyclerView
 import hz.hz.atomchat.R
+import hz.hz.atomchat.commonviews.header
+import hz.hz.atomchat.render.LCEState
 import hz.hz.atomchat.render.diff
 import hz.hz.atomchat.render.observe
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,11 +38,40 @@ class TasksFragment : Fragment() {
         val rv = view.findViewById<EpoxyRecyclerView>(R.id.tasks_rv)
 
         model.tasks().observe(view) {
-            diff({ it }) {
+            diff(LCEState<State>::content) {
+                if (it.content == null) {
+                    return@diff
+                }
+
                 rv.withModels {
-                    taskView {
-                        id("bla")
-                        title(it)
+                    header {
+                        id("header1")
+                        title(view.context.getString(R.string.task_header_in_progress, it.content.tasksInProgress.size))
+                    }
+
+                    for (task in it.content.tasksInProgress) {
+                        currentTaskView {
+                            id(task.id)
+                            title(task.title)
+                            priority(task.priority)
+                            action(task.action)
+                            endTime(task.endTime)
+                        }
+                    }
+
+                    header {
+                        id("header2")
+                        title(view.context.getString(R.string.task_header_todo, it.content.tasksToDo.size))
+                    }
+
+                    for (task in it.content.tasksToDo) {
+                        taskView {
+                            id(task.id)
+                            title(task.title)
+                            priority(task.priority)
+                            action(task.action)
+                            endTime(task.endTime)
+                        }
                     }
                 }
             }

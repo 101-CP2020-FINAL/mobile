@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="task_action_todo">Примите в работу</string>
+    <string name="task_action_tobedone">Подтвердите выполнение</string>
+    <string name="task_header_in_progress">Задачи в работе: %1$d</string>
+    <string name="task_header_todo">В ожидании: %1$d</string>
+
+</resources>
