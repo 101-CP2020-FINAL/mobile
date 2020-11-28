@@ -9,10 +9,8 @@ import androidx.fragment.app.viewModels
 import com.airbnb.epoxy.EpoxyRecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import hz.hz.atomchat.R
-import hz.hz.atomchat.commonviews.button
-import hz.hz.atomchat.commonviews.header2
-import hz.hz.atomchat.commonviews.image
-import hz.hz.atomchat.commonviews.text
+import hz.hz.atomchat.commonviews.*
+import hz.hz.atomchat.render.Loading
 import hz.hz.atomchat.render.diff
 import hz.hz.atomchat.render.observe
 import hz.hz.atomchat.tasks.Action
@@ -51,7 +49,9 @@ class DetailsFragment : BottomSheetDialogFragment() {
         val rv = view.findViewById<EpoxyRecyclerView>(R.id.rv)
 
         model.task(requireArguments().getInt("id")).observe(view) {
-            diff({ it }) { task ->
+            diff({ it }) { state ->
+
+                val task = state.task
 
                 rv.withModels {
                     if (task.action == Action.ToBeDone) {
@@ -73,7 +73,7 @@ class DetailsFragment : BottomSheetDialogFragment() {
                     }
 
 
-                    if (task.description.isBlank()) {
+                    if (task.description.isNotBlank()) {
                         header2 {
                             id("details")
                             title("Описание")
@@ -90,9 +90,25 @@ class DetailsFragment : BottomSheetDialogFragment() {
                         image(R.drawable.comments1)
                     }
 
-                    button {
-                        id("button")
-                        text("Взять в работу")
+                    if (state.action.loading != Loading.None) {
+                        progress {
+                            id("progress")
+                        }
+                    } else {
+                        button {
+                            id("button")
+                            text("Взять в работу")
+                            clickListener(View.OnClickListener {
+                                model.changeStatus()
+                            })
+                        }
+                    }
+
+                    if (state.action.error != null) {
+                        text {
+                            id("error")
+                            text("Error: " + state.action.error.message)
+                        }
                     }
                 }
             }

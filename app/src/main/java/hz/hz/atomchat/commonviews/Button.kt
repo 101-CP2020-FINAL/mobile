@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.TextView
+import com.airbnb.epoxy.CallbackProp
 import com.airbnb.epoxy.ModelView
 import com.airbnb.epoxy.TextProp
 import hz.hz.atomchat.R
@@ -25,6 +26,11 @@ class Button @JvmOverloads constructor(
     @TextProp
     fun setText(text: CharSequence) {
         this.text.text = text
+    }
+
+    @CallbackProp
+    fun setClickListener(listener: OnClickListener?) {
+        text.setOnClickListener(listener)
     }
 
 }

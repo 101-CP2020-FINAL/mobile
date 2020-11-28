@@ -8,8 +8,8 @@ class Task(
     val author: Dictionary,
     val title: String,
     val description: String,
-    val date_start: String,
-    val deadline: String,
+    val date_start: String?,
+    val deadline: String?,
 )
 
 class Dictionary(

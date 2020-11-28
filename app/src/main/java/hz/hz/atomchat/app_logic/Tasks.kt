@@ -10,6 +10,7 @@ import hz.hz.atomchat.tasks.Task
 import io.github.centrifugal.centrifuge.*
 import io.github.centrifugal.centrifuge.EventListener
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -24,6 +25,8 @@ object Tasks {
     private val api by lazy { createApi() }
 
     private var appState: LCEState<AppState> = LCEState(loading = Loading.Main)
+
+    private val actionChannel = Channel<Pair<Int, Int>>()
 
     fun tasks(): Flow<LCEState<AppState>> = flow {
 
@@ -56,7 +59,10 @@ object Tasks {
                 return@collect
             }
 
-            val tasks = appState.content!!.tasks.plus(task).sortedBy { it.priority.ordinal }
+            val tasks = appState.content!!.tasks
+                .filter { it.id != task.id }
+                .plus(task)
+                .sortedBy { it.priority.ordinal }
 
             appState = appState.copy(content = AppState(tasks))
 
@@ -74,8 +80,26 @@ object Tasks {
         return appState.content!!.tasks.first { it.id == id }
     }
 
-    suspend fun changeStatus(taskId: Int, statusId: Int) {
-        delay(2000)
+    fun taskAction(): Flow<LCEState<Unit>> = actionChannel
+        .consumeAsFlow()
+        .flatMapLatest {
+            flow<LCEState<Unit>> {
+                emit(LCEState(loading = Loading.Main))
+
+                try {
+                    api.changeTasks(it.first, it.second).await()
+                    emit(LCEState(content = Unit))
+                } catch (e: Throwable) {
+                    emit(LCEState(error = e))
+                }
+            }
+        }
+        .onStart {
+            emit(LCEState())
+        }
+
+    fun changeStatus(taskId: Int, statusId: Int) {
+        actionChannel.offer(Pair(taskId, statusId))
     }
 }
 
@@ -86,14 +110,18 @@ private fun TaskApi.toTask(): Task = Task(
     description = description,
     priority = Priority.values()[priority.id - 1],
     action = Action.values()[status.id - 1],
-    startTime = LocalDateTime.parse(
-        date_start,
-        Tasks.format
-    ),
-    endTime = LocalDateTime.parse(
-        deadline,
-        Tasks.format
-    ),
+    startTime = if (date_start != null) {
+        LocalDateTime.parse(
+            date_start,
+            Tasks.format
+        )
+    } else LocalDateTime.now(),
+    endTime = if (deadline != null) {
+        LocalDateTime.parse(
+            deadline,
+            Tasks.format
+        )
+    } else LocalDateTime.now(),
 )
 
 fun socketFlow(): Flow<Task> = callbackFlow {
