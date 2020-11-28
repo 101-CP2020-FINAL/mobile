@@ -1,7 +1,6 @@
-package hz.hz.atomchat.tasks
+package hz.hz.atomchat.news
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +12,7 @@ import hz.hz.atomchat.commonviews.header
 import hz.hz.atomchat.render.LCEState
 import hz.hz.atomchat.render.diff
 import hz.hz.atomchat.render.observe
+import hz.hz.atomchat.tasks.taskView
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import timber.log.Timber
 
@@ -20,7 +20,7 @@ import timber.log.Timber
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 @ExperimentalCoroutinesApi
-class TasksFragment : Fragment() {
+class NewsFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,18 +29,20 @@ class TasksFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.epoxy_fragment, container, false)
 
-        Timber.d("tasks")
+        Timber.d("news")
 
-        val model: TasksViewModel by viewModels()
+        val model: NewsViewModel by viewModels()
 
         val rv = view.findViewById<EpoxyRecyclerView>(R.id.rv)
 
         model.tasks().observe(view) {
-            onChange { ps, ns ->
-                Timber.d("observe tasks")
+            Timber.d("observe news")
 
-                if (ns.content == null) {
-                    return@onChange
+            diff(LCEState<State>::content) {
+                Timber.d("diff news")
+
+                if (it.content == null) {
+                    return@diff
                 }
 
                 rv.withModels {
@@ -49,32 +51,12 @@ class TasksFragment : Fragment() {
                         title(
                             view.context.getString(
                                 R.string.task_header_in_progress,
-                                ns.content.tasksInProgress.size
+                                it.content.news.size
                             )
                         )
                     }
 
-                    for (task in ns.content.tasksInProgress) {
-                        currentTaskView {
-                            id(task.id)
-                            title(task.title)
-                            priority(task.priority)
-                            action(task.action)
-                            endTime(task.endTime)
-                        }
-                    }
-
-                    header {
-                        id("header2")
-                        title(
-                            view.context.getString(
-                                R.string.task_header_todo,
-                                ns.content.tasksToDo.size
-                            )
-                        )
-                    }
-
-                    for (task in ns.content.tasksToDo) {
+                    for (task in it.content.news) {
                         taskView {
                             id(task.id)
                             title(task.title)
