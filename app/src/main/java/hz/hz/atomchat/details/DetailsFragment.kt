@@ -25,6 +25,14 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @ExperimentalCoroutinesApi
 class DetailsFragment : BottomSheetDialogFragment() {
 
+    fun newInstance(id: Int): DetailsFragment {
+        val dialog = DetailsFragment()
+
+        dialog.arguments = Bundle().apply { putInt("id", id) }
+
+        return dialog
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,7 +48,7 @@ class DetailsFragment : BottomSheetDialogFragment() {
 
         val rv = view.findViewById<EpoxyRecyclerView>(R.id.rv)
 
-        model.task().observe(view) {
+        model.task(arguments!!.getInt("id")).observe(view) {
             diff({ it }) { task ->
 
                 rv.withModels {

@@ -6,10 +6,12 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import com.airbnb.epoxy.CallbackProp
 import com.airbnb.epoxy.ModelProp
 import com.airbnb.epoxy.ModelView
 import com.airbnb.epoxy.TextProp
 import hz.hz.atomchat.R
+import hz.hz.atomchat.commonviews.setSelectableItemBackground
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.format.DateTimeFormatter
 
@@ -57,10 +59,15 @@ class TaskView @JvmOverloads constructor(
     @ModelProp
     fun setBackground(hasBg: Boolean) {
         if (hasBg) {
-            setBackgroundResource(R.color.task_bg)
+            setBackgroundResource(R.drawable.task_bg)
         } else {
-            background = null
+            setSelectableItemBackground()
         }
+    }
+
+    @CallbackProp
+    fun setClickListener(listener: OnClickListener?) {
+        setOnClickListener(listener)
     }
 
 }

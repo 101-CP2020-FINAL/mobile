@@ -7,10 +7,12 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import com.airbnb.epoxy.CallbackProp
 import com.airbnb.epoxy.ModelProp
 import com.airbnb.epoxy.ModelView
 import com.airbnb.epoxy.TextProp
 import hz.hz.atomchat.R
+import hz.hz.atomchat.commonviews.setSelectableItemBackground
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
@@ -36,6 +38,7 @@ class CurrentTaskView @JvmOverloads constructor(
         date = findViewById(R.id.task_item_date)
         action = findViewById(R.id.task_item_action)
         priority = findViewById(R.id.task_item_priority)
+        setSelectableItemBackground()
     }
 
     @TextProp
@@ -70,6 +73,11 @@ class CurrentTaskView @JvmOverloads constructor(
     @ModelProp
     fun setPriority(new: Priority) {
         priority.setImageResource(new.icon)
+    }
+
+    @CallbackProp
+    fun setClickListener(listener: OnClickListener?) {
+        setOnClickListener(listener)
     }
 
 }

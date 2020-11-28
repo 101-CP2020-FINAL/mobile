@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import com.airbnb.epoxy.EpoxyRecyclerView
 import hz.hz.atomchat.R
 import hz.hz.atomchat.commonviews.header
+import hz.hz.atomchat.details.DetailsFragment
 import hz.hz.atomchat.render.LCEState
 import hz.hz.atomchat.render.diff
 import hz.hz.atomchat.render.observe
@@ -65,6 +66,7 @@ class TasksFragment : Fragment() {
                                 priority(task.priority)
                                 action(task.action)
                                 endTime(task.endTime)
+                                clickListener(View.OnClickListener { openTask(task.id) })
                             }
                         }
                     }
@@ -87,6 +89,7 @@ class TasksFragment : Fragment() {
                             action(task.action)
                             time(TaskTime(task.startTime, task.endTime))
                             background(true)
+                            clickListener(View.OnClickListener { openTask(task.id) })
                         }
                     }
                 }
@@ -94,5 +97,9 @@ class TasksFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun openTask(id: Int) {
+        DetailsFragment().show(parentFragmentManager, "bottom_fragment")
     }
 }
