@@ -32,7 +32,6 @@ class TaskView @JvmOverloads constructor(
         date = findViewById(R.id.task_item_date)
         action = findViewById(R.id.task_item_action)
         priority = findViewById(R.id.task_item_priority)
-        setBackgroundResource(R.color.task_bg)
     }
 
     @TextProp
@@ -41,13 +40,13 @@ class TaskView @JvmOverloads constructor(
     }
 
     @ModelProp
-    fun setEndTime(new: LocalDateTime) {
-        date.text = new.format(format)
+    fun setTime(new: TaskTime) {
+        date.text = "${new.start.format(format)} - ${new.end.format(format)}"
     }
 
     @ModelProp
     fun setAction(new: Action) {
-        action.setText(new.actionText)
+        action.setText(new.callForActionText)
     }
 
     @ModelProp
@@ -55,4 +54,15 @@ class TaskView @JvmOverloads constructor(
         priority.setImageResource(new.icon)
     }
 
+    @ModelProp
+    fun setBackground(hasBg: Boolean) {
+        if (hasBg) {
+            setBackgroundResource(R.color.task_bg)
+        } else {
+            background = null
+        }
+    }
+
 }
+
+data class TaskTime(val start: LocalDateTime, val end: LocalDateTime)

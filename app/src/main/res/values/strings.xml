@@ -12,6 +12,12 @@
 
     <string name="task_action_todo">Примите в работу</string>
     <string name="task_action_tobedone">Подтвердите выполнение</string>
+    <string name="task_action_tobechecked">На проверку</string>
+    <string name="task_action_done">Выполнено</string>
+    <string name="task_button_todo">Взять в работу</string>
+    <string name="task_button_tobedone">Подтвердить выполнение</string>
+    <string name="task_button_tobechecked">Отметить как проверенное</string>
+    <string name="task_button_done">Выполнено</string>
     <string name="task_header_in_progress">Задачи в работе: %1$d</string>
     <string name="task_header_todo">В ожидании: %1$d</string>
     <string name="nav_tasks">Задачи</string>

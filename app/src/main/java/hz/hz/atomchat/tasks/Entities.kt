@@ -6,14 +6,17 @@ import hz.hz.atomchat.R
 import org.threeten.bp.LocalDateTime
 
 enum class Priority(@DrawableRes val icon: Int) {
+    Alarm(R.drawable.priority_high),
     High(R.drawable.priority_high),
     Medium(R.drawable.priority_medium),
     Low(R.drawable.priority_low)
 }
 
-enum class Action(@StringRes val actionText: Int) {
-    ToDo(R.string.task_action_todo),
-    ToBeDone(R.string.task_action_tobedone)
+enum class Action(@StringRes val callForActionText: Int, @StringRes val buttonText: Int) {
+    ToDo(R.string.task_action_todo, R.string.task_button_todo),
+    ToBeDone(R.string.task_action_tobedone, R.string.task_button_tobedone),
+    ToBeChecked(R.string.task_action_tobechecked, R.string.task_button_tobechecked),
+    Done(R.string.task_action_done, R.string.task_button_done),
 }
 
 class Task(

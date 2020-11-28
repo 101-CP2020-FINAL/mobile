@@ -11,6 +11,7 @@ import io.github.centrifugal.centrifuge.*
 import io.github.centrifugal.centrifuge.EventListener
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import okhttp3.*
 import org.threeten.bp.LocalDateTime
@@ -27,7 +28,10 @@ object Tasks {
 
     fun tasks(): Flow<LCEState<AppState>> = flow {
 
-        appState = appState.copy(loading = Loading.Main, error = null)
+        appState = appState.copy(
+            loading = if (appState.content == null) Loading.Main else Loading.Secondary,
+            error = null
+        )
 
         emit(appState)
 
@@ -66,14 +70,23 @@ object Tasks {
     private fun convert(tasks: List<TaskApi>): List<Task> {
         return tasks.map { it.toTask() }
     }
+
+    fun task(id: Int): Task {
+        return appState.content!!.tasks.first { it.id == id }
+    }
+
+    suspend fun changeStatus(taskId: Int, statusId: Int) {
+        delay(2000)
+    }
 }
+
 
 private fun TaskApi.toTask(): Task = Task(
     id,
     title = title,
     description = description,
-    priority = Priority.High,
-    action = Action.ToDo,
+    priority = Priority.values()[priority.id - 1],
+    action = Action.values()[status.id - 1],
     startTime = LocalDateTime.parse(
         date_start,
         Tasks.format

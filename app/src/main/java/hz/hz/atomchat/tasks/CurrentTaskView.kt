@@ -14,10 +14,7 @@ import hz.hz.atomchat.R
 import org.threeten.bp.Duration
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
-import org.threeten.bp.Period
 import org.threeten.bp.format.DateTimeFormatter
-import java.sql.Time
-import java.util.*
 
 @ModelView(autoLayout = ModelView.Size.MATCH_WIDTH_WRAP_HEIGHT)
 class CurrentTaskView @JvmOverloads constructor(
@@ -55,10 +52,11 @@ class CurrentTaskView @JvmOverloads constructor(
         timer = object : CountDownTimer(distance.toMillis(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val time = LocalTime.ofSecondOfDay(millisUntilFinished / 1000)
-                date.text = time.format(format)
+                date.text = "Осталось ${time.format(format)}"
             }
 
             override fun onFinish() {
+                date.text = "Просрочено"
             }
 
         }.start()
@@ -66,7 +64,7 @@ class CurrentTaskView @JvmOverloads constructor(
 
     @ModelProp
     fun setAction(new: Action) {
-        action.setText(new.actionText)
+        action.setText(new.callForActionText)
     }
 
     @ModelProp

@@ -15,6 +15,7 @@ import hz.hz.atomchat.commonviews.image
 import hz.hz.atomchat.commonviews.text
 import hz.hz.atomchat.render.diff
 import hz.hz.atomchat.render.observe
+import hz.hz.atomchat.tasks.TaskTime
 import hz.hz.atomchat.tasks.taskView
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -48,7 +49,7 @@ class DetailsFragment : BottomSheetDialogFragment() {
                         title(task.title)
                         priority(task.priority)
                         action(task.action)
-                        endTime(task.endTime)
+                        time(TaskTime(task.startTime, task.endTime))
                     }
 
                     header {

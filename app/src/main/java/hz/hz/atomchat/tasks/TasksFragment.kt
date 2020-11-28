@@ -85,7 +85,8 @@ class TasksFragment : Fragment() {
                             title(task.title)
                             priority(task.priority)
                             action(task.action)
-                            endTime(task.endTime)
+                            time(TaskTime(task.startTime, task.endTime))
+                            background(true)
                         }
                     }
                 }

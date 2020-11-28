@@ -15,8 +15,8 @@ class TasksViewModel : ViewModel() {
     fun tasks(): Flow<LCEState<State>> = Tasks.tasks().mapLatest {
         it.mapContent { state ->
             State(
-                tasksInProgress = emptyList(),
-                tasksToDo = state.tasks
+                tasksInProgress = state.tasks.filter { it.action == Action.ToBeDone },
+                tasksToDo = state.tasks.filter { it.action == Action.ToDo }
             )
         }
     }
