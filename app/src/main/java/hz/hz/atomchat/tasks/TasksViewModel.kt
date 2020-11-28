@@ -16,7 +16,8 @@ class TasksViewModel : ViewModel() {
                 title = "Title $it",
                 Priority.values()[Math.floorMod(it, Priority.values().size)],
                 Action.values()[Math.floorMod(it, Action.values().size)],
-                endTime = LocalDateTime.now().plusMinutes(1 + 7 * it.toLong())
+                endTime = LocalDateTime.now().plusMinutes(1 + 7 * it.toLong()),
+                description = ""
             )
         }
 
@@ -28,7 +29,8 @@ class TasksViewModel : ViewModel() {
                     title = "Title $it",
                     Priority.values()[Math.floorMod(it, Priority.values().size)],
                     Action.values()[Math.floorMod(it, Action.values().size)],
-                    endTime = LocalDateTime.now().plusMinutes(i + it.toLong())
+                    endTime = LocalDateTime.now().plusMinutes(i + it.toLong()),
+                    description = ""
                 )
             }
 

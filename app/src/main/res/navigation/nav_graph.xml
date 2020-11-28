@@ -9,7 +9,7 @@
         android:id="@+id/FirstFragment"
         android:name="hz.hz.atomchat.tasks.TasksFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        tools:layout="@layout/epoxy_fragment">
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
