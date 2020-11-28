@@ -9,29 +9,28 @@ import androidx.fragment.app.viewModels
 import com.airbnb.epoxy.EpoxyRecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import hz.hz.atomchat.R
-import hz.hz.atomchat.commonviews.button
-import hz.hz.atomchat.commonviews.header
-import hz.hz.atomchat.commonviews.image
-import hz.hz.atomchat.commonviews.text
+import hz.hz.atomchat.commonviews.*
 import hz.hz.atomchat.render.diff
 import hz.hz.atomchat.render.observe
+import hz.hz.atomchat.tasks.Action
 import hz.hz.atomchat.tasks.TaskTime
+import hz.hz.atomchat.tasks.currentTaskView
 import hz.hz.atomchat.tasks.taskView
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+
+fun newDetails(id: Int): DetailsFragment {
+    val dialog = DetailsFragment()
+
+    dialog.arguments = Bundle().apply { putInt("id", id) }
+
+    return dialog
+}
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 @ExperimentalCoroutinesApi
 class DetailsFragment : BottomSheetDialogFragment() {
-
-    fun newInstance(id: Int): DetailsFragment {
-        val dialog = DetailsFragment()
-
-        dialog.arguments = Bundle().apply { putInt("id", id) }
-
-        return dialog
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,26 +47,39 @@ class DetailsFragment : BottomSheetDialogFragment() {
 
         val rv = view.findViewById<EpoxyRecyclerView>(R.id.rv)
 
-        model.task(arguments!!.getInt("id")).observe(view) {
+        model.task(requireArguments().getInt("id")).observe(view) {
             diff({ it }) { task ->
 
                 rv.withModels {
-                    taskView {
-                        id(task.id)
-                        title(task.title)
-                        priority(task.priority)
-                        action(task.action)
-                        time(TaskTime(task.startTime, task.endTime))
+                    if (task.action == Action.ToBeDone) {
+                        currentTaskView {
+                            id(task.id)
+                            title(task.title)
+                            priority(task.priority)
+                            action(task.action)
+                            endTime(task.endTime)
+                        }
+                    } else {
+                        taskView {
+                            id(task.id)
+                            title(task.title)
+                            priority(task.priority)
+                            action(task.action)
+                            time(TaskTime(task.startTime, task.endTime))
+                        }
                     }
 
-                    header {
-                        id("details")
-                        title("Описание")
-                    }
 
-                    text {
-                        id("description")
-                        text(task.description)
+                    if (task.description.isBlank()) {
+                        header2 {
+                            id("details")
+                            title("Описание")
+                        }
+
+                        text {
+                            id("description")
+                            text(task.description)
+                        }
                     }
 
                     image {

@@ -11,6 +11,7 @@ import com.airbnb.epoxy.EpoxyRecyclerView
 import hz.hz.atomchat.R
 import hz.hz.atomchat.commonviews.header
 import hz.hz.atomchat.details.DetailsFragment
+import hz.hz.atomchat.details.newDetails
 import hz.hz.atomchat.render.LCEState
 import hz.hz.atomchat.render.diff
 import hz.hz.atomchat.render.observe
@@ -100,6 +101,6 @@ class TasksFragment : Fragment() {
     }
 
     private fun openTask(id: Int) {
-        DetailsFragment().show(parentFragmentManager, "bottom_fragment")
+        newDetails(id).show(parentFragmentManager, "bottom_fragment")
     }
 }

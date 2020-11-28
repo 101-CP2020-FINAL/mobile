@@ -49,12 +49,7 @@ class NewsFragment : Fragment() {
                 rv.withModels {
                     header {
                         id("header1")
-                        title(
-                            view.context.getString(
-                                R.string.task_header_in_progress,
-                                it.content.news.size
-                            )
-                        )
+                        title("Информационные сообщения")
                     }
 
                     for (task in it.content.news) {

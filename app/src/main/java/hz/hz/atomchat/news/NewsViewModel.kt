@@ -13,28 +13,34 @@ import org.threeten.bp.LocalDateTime
 class NewsViewModel : ViewModel() {
 
     fun tasks(): Flow<LCEState<State>> = flow {
-        for (i in 1..10) {
+        val taskList = listOf(
+            Task(
+                id = 1,
+                title = "Проверить ремни ГРМ",
+                Priority.Low,
+                Action.ToBeChecked,
+                startTime = LocalDateTime.now(),
+                endTime = LocalDateTime.now(),
+                description = ""
+            ),
+            Task(
+                id = 2,
+                title = "Ознакомиться с изменениями в трудовом распорядке",
+                Priority.Medium,
+                Action.Done,
+                startTime = LocalDateTime.now(),
+                endTime = LocalDateTime.now(),
+                description = ""
+            )
+        )
 
-            val taskList = List(10) {
-                Task(
-                    id = it,
-                    title = "Title $it",
-                    Priority.values()[Math.floorMod(it, Priority.values().size)],
-                    Action.values()[Math.floorMod(it, Action.values().size)],
-                    startTime = LocalDateTime.now().plusMinutes(i + it.toLong()),
-                    endTime = LocalDateTime.now().plusMinutes(i + it.toLong()),
-                    description = ""
-                )
-            }
-
-            emit(
-                LCEState(
-                    content = State(
-                        news = taskList
-                    )
+        emit(
+            LCEState(
+                content = State(
+                    news = taskList
                 )
             )
-            delay(1000)
-        }
+        )
+        delay(1000)
     }
 }
