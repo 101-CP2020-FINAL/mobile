@@ -3,6 +3,7 @@ package hz.hz.atomchat.details
 import androidx.lifecycle.ViewModel
 import hz.hz.atomchat.app_logic.Tasks
 import hz.hz.atomchat.render.LCEState
+import hz.hz.atomchat.tasks.Action
 import hz.hz.atomchat.tasks.Task
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +28,10 @@ class DetailsViewModel : ViewModel() {
         }
 
     fun changeStatus() {
-        Tasks.changeStatus(state.task.id, 4)
+        if (state.task.action == Action.ToDo) {
+            Tasks.changeStatus(state.task.id, 2)
+        } else {
+            Tasks.changeStatus(state.task.id, 4)
+        }
     }
 }

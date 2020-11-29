@@ -26,7 +26,7 @@ object Tasks {
 
     private var appState: LCEState<AppState> = LCEState(loading = Loading.Main)
 
-    private val actionChannel = Channel<Pair<Int, Int>>()
+    private var actionChannel = Channel<Pair<Int, Int>>()
 
     fun tasks(): Flow<LCEState<AppState>> = flow {
 
@@ -42,9 +42,10 @@ object Tasks {
             appState.copy(
                 loading = Loading.None,
                 error = null,
-                content = AppState(tasks = convert(tasks)),
+                content = AppState(tasks = convert(tasks).sortedBy { it.priority.ordinal }),
             )
         } catch (e: Throwable) {
+            Timber.e(e)
             appState.copy(
                 loading = Loading.None,
                 error = e,
@@ -80,23 +81,27 @@ object Tasks {
         return appState.content!!.tasks.first { it.id == id }
     }
 
-    fun taskAction(): Flow<LCEState<Unit>> = actionChannel
-        .consumeAsFlow()
-        .flatMapLatest {
-            flow<LCEState<Unit>> {
-                emit(LCEState(loading = Loading.Main))
+    fun taskAction(): Flow<LCEState<Unit>> {
+        actionChannel = Channel<Pair<Int, Int>>()
 
-                try {
-                    api.changeTasks(it.first, it.second).await()
-                    emit(LCEState(content = Unit))
-                } catch (e: Throwable) {
-                    emit(LCEState(error = e))
+        return actionChannel
+            .consumeAsFlow()
+            .flatMapLatest {
+                flow<LCEState<Unit>> {
+                    emit(LCEState(loading = Loading.Main))
+
+                    try {
+                        api.changeTasks(it.first, it.second).await()
+                        emit(LCEState(content = Unit))
+                    } catch (e: Throwable) {
+                        emit(LCEState(error = e))
+                    }
                 }
             }
-        }
-        .onStart {
-            emit(LCEState())
-        }
+            .onStart {
+                emit(LCEState())
+            }
+    }
 
     fun changeStatus(taskId: Int, statusId: Int) {
         actionChannel.offer(Pair(taskId, statusId))
@@ -107,7 +112,7 @@ object Tasks {
 private fun TaskApi.toTask(): Task = Task(
     id,
     title = title,
-    description = description,
+    description = description.orEmpty(),
     priority = Priority.values()[priority.id - 1],
     action = Action.values()[status.id - 1],
     startTime = if (date_start != null) {

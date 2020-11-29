@@ -97,7 +97,7 @@ class DetailsFragment : BottomSheetDialogFragment() {
                     } else {
                         button {
                             id("button")
-                            text("Взять в работу")
+                            text(task.action.buttonText)
                             clickListener(View.OnClickListener {
                                 model.changeStatus()
                             })
@@ -109,6 +109,10 @@ class DetailsFragment : BottomSheetDialogFragment() {
                             id("error")
                             text("Error: " + state.action.error.message)
                         }
+                    }
+
+                    if (state.action.content != null) {
+                        this@DetailsFragment.dismiss()
                     }
                 }
             }
