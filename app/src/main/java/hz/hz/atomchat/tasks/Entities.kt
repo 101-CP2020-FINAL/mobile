@@ -6,10 +6,10 @@ import hz.hz.atomchat.R
 import org.threeten.bp.LocalDateTime
 
 enum class Priority(@DrawableRes val icon: Int) {
-    Alarm(R.drawable.priority_high),
-    High(R.drawable.priority_high),
+    Low(R.drawable.priority_low),
     Medium(R.drawable.priority_medium),
-    Low(R.drawable.priority_low)
+    High(R.drawable.priority_high),
+    Alarm(R.drawable.priority_high),
 }
 
 enum class Action(@StringRes val callForActionText: Int, @StringRes val buttonText: Int) {

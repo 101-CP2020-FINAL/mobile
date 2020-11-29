@@ -42,7 +42,7 @@ object Tasks {
             appState.copy(
                 loading = Loading.None,
                 error = null,
-                content = AppState(tasks = convert(tasks).sortedBy { it.priority.ordinal }),
+                content = AppState(tasks = convert(tasks).sortedByDescending { it.priority.ordinal }),
             )
         } catch (e: Throwable) {
             Timber.e(e)
@@ -63,7 +63,7 @@ object Tasks {
             val tasks = appState.content!!.tasks
                 .filter { it.id != task.id }
                 .plus(task)
-                .sortedBy { it.priority.ordinal }
+                .sortedByDescending { it.priority.ordinal }
 
             appState = appState.copy(content = AppState(tasks))
 
